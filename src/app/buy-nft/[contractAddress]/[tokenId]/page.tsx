@@ -118,6 +118,24 @@ export default function BuyNftPage() {
         }
     }, [step, isPurchaseSuccess, router])
 
+    useEffect(() => {
+        if (address)
+            checkCompliance()
+    }, [address])
+
+    async function checkCompliance () {
+        if(!address) return
+
+        const response = await fetch("/api/compliance", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ address })
+        })
+        const result = await response.json()
+    }
+
     // Check if the current user is the seller
     const isSeller = seller === address
 

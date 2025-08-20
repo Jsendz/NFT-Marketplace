@@ -1,8 +1,10 @@
 import type { Metadata } from "next"
 import "./globals.css"
 import Header from "@/components/Header"
-import { type ReactNode } from "react"
+import {  type ReactNode } from "react"
 import { Providers } from "./providers"
+import { useAccount } from "wagmi"
+import { DiVim } from "react-icons/di"
 
 export const metadata: Metadata = {
     title: "NftMarketplace",
@@ -10,6 +12,7 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout(props: { children: ReactNode }) {
+    
     return (
         <html lang="en">
             <head>
@@ -19,6 +22,7 @@ export default function RootLayout(props: { children: ReactNode }) {
                 <Providers>
                     <Header />
                     {props.children}
+                   
                 </Providers>
             </body>
         </html>
