@@ -7,14 +7,37 @@ interface ContractsConfig {
     }
 }
 
+export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+
 export const chainsToContracts: ContractsConfig = {
-    31337: {
-        usdc: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-        nftMarketplace: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-        cakeNft: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-        moodNft: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-    },
-}
+  // Local Anvil
+  31337: {
+    usdc: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    nftMarketplace: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+    cakeNft: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+    moodNft: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+  },
+
+  // Ethereum Sepolia
+  11155111: {
+    usdc: "0x8099829422022c86Ae8e83DA901d2b0260d16Dac",
+    nftMarketplace: "0x91C7ED5261A7e578ebD458EfB7F17D04108ECffA",
+    cakeNft: ZERO_ADDRESS, // until you deploy them on Sepolia
+    moodNft: ZERO_ADDRESS,
+  },
+} as const;
+
+export const DEFAULT_CHAIN_ID = 11155111 as const;
+const ENV_CHAIN_ID = Number(process.env.NEXT_PUBLIC_CHAIN_ID ?? DEFAULT_CHAIN_ID);
+export const CHAIN_ID = chainsToContracts[ENV_CHAIN_ID] ? ENV_CHAIN_ID : DEFAULT_CHAIN_ID;
+
+export const {
+  usdc: USDC_ADDRESS,
+  nftMarketplace: MARKETPLACE_ADDRESS,
+  cakeNft: CAKE_NFT_ADDRESS,
+  moodNft: MOOD_NFT_ADDRESS,
+} = chainsToContracts[CHAIN_ID];
+
 
 export const erc20Abi = [
     {
