@@ -1744,4 +1744,3 @@ export const nftAbi = [
     },
 ]
 
-
