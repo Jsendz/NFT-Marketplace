@@ -1,15 +1,26 @@
-volumes:
-  postgres_data:
-    driver: local
-
+version: "3.8"
 services:
   postgresql:
     image: postgres:16
-    shm_size: 1g
     restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: rindexer
+      POSTGRES_DB: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    ports:
-      - 5440:5432
-    env_file:
-      - ./.env
+
+  indexer:
+    build: .
+    depends_on:
+      - postgresql
+    environment:
+      RPC_HTTP_URL: ${RPC_HTTP_URL}
+      DATABASE_URL: postgres://postgres:rindexer@postgresql:5432/postgres
+      PORT: 8080
+    volumes:
+      - ./abis:/app/abis
+      - ./generated_csv:/app/generated_csv
+    # command: ["your-indexer-start-command"]
+volumes:
+  postgres_data:
