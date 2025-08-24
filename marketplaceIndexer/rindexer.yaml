@@ -1,33 +1,41 @@
 name: marketplaceIndexer
 project_type: no-code
 config: {}
+
 networks:
-- name: anvil
-  chain_id: 31337
-  rpc: http://127.0.0.1:8545
+  - name: sepolia
+    chain_id: 11155111
+    # Use an ENV var so you don't hardcode keys
+    rpc: ${RPC_HTTP_URL}
+
 storage:
   postgres:
     enabled: true
     drop_each_run: false
-    database_url: postgresql://postgres:rindexer@localhost:5440/postgres
+    # Use the Render-provided connection string
+    database_url: ${DATABASE_URL}
   csv:
-    enabled: true
+    enabled: false
     path: ./generated_csv
+
 native_transfers:
   enabled: false
+
 contracts:
-- name: NftMarketplace
-  details:
-  - network: anvil
-    address: 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
-    start_block: '0'
-  abi: ./abis/nftMarketplace.abi.json
-  include_events:
-  - ItemListed
-  - ItemCanceled
-  - ItemBought
+  - name: NftMarketplace
+    details:
+      - network: sepolia
+        address: 0x91C7ED5261A7e578ebD458EfB7F17D04108ECffA  # your Sepolia deploy
+        start_block: "9039200"                              # a few blocks before 9039206–9039207
+    abi: ./abis/nftMarketplace.abi.json
+    include_events:
+      - ItemListed
+      - ItemCanceled
+      - ItemBought
+
 global:
   query_layer:
     enabled: true
-    port: 3001
+    # Render sets PORT; use it so health checks pass
+    port: ${PORT}
     playground: true
