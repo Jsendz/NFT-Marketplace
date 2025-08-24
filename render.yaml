@@ -3,8 +3,11 @@ services:
     type: web
     env: docker
     rootDir: marketplaceIndexer
-    dockerComposeFile: marketplaceIndexer/docker-compose.yml
+    autoDeploy: true
     envVars:
       - key: DATABASE_URL
-        value: <replace-with-your-actual-db-url>
-    autoDeploy: true
+        value: <render-postgres-url>
+      - key: RPC_HTTP_URL
+        value: <your-rpc-url>
+      - key: PORT
+        value: 8080
