@@ -2,11 +2,9 @@ services:
   - name: marketplace-indexer
     type: web
     env: docker
-    repo: https://github.com/Jsendz/NFT-Marketplace
     rootDir: marketplaceIndexer
     dockerComposeFile: marketplaceIndexer/docker-compose.yml
     envVars:
       - key: DATABASE_URL
-        value: postgresql://postgres:rindexer@localhost:5440/postgres
-      # Add more as needed
+        value: <replace-with-your-actual-db-url>
     autoDeploy: true
