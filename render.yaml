@@ -4,7 +4,7 @@ services:
     env: docker
     repo: https://github.com/Jsendz/NFT-Marketplace
     rootDir: marketplaceIndexer
-    dockerComposeFile: docker-compose.yml
+    dockerComposeFile: marketplaceIndexer/docker-compose.yml
     envVars:
       - key: DATABASE_URL
         value: postgresql://postgres:rindexer@localhost:5440/postgres
