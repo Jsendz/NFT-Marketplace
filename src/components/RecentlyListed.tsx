@@ -87,7 +87,7 @@ const GET_RECENT_NFTS = `
     `
 
     async function fetchNFTs(): Promise<NFTQueryResponse> {
-    const response = await fetch("http://localhost:3001/graphql", {
+    const response = await fetch("postgresql://nft_marketplace_app_user:wnu9Np0VxUFZbFsggPaB2ILzlRJwtfU4@dpg-d2jjcgn5r7bs73ev8gc0-a/nft_marketplace_app", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
