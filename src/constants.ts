@@ -22,7 +22,7 @@ export const chainsToContracts: ContractsConfig = {
   11155111: {
     usdc: "0x8099829422022c86Ae8e83DA901d2b0260d16Dac",
     nftMarketplace: "0x91C7ED5261A7e578ebD458EfB7F17D04108ECffA",
-    cakeNft: ZERO_ADDRESS, // until you deploy them on Sepolia
+    cakeNft: "0x49cfa80e24b9bb198d0c56278c1e10c492518218",
     moodNft: ZERO_ADDRESS,
   },
 } as const;
