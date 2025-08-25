@@ -87,17 +87,16 @@ const GET_RECENT_NFTS = `
     `
 
     async function fetchNFTs(): Promise<NFTQueryResponse> {
-    const response = await fetch("https://nft-marketplace-20aw.onrender.com/graphql", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-
-        },
-        body: JSON.stringify({
-            query: GET_RECENT_NFTS,
-        }),
-    })
-    return response.json()
+    const res = await fetch("/api/graphql", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query: GET_RECENT_NFTS }),
+    cache: "no-store",
+  })
+  if (!res.ok) throw new Error(`GraphQL HTTP ${res.status}`)
+  const json = await res.json()
+  if (json.errors) throw new Error(`GraphQL ${JSON.stringify(json.errors)}`)
+  return json
 }
 
 
