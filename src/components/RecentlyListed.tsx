@@ -87,15 +87,23 @@ const GET_RECENT_NFTS = `
     `
 
     async function fetchNFTs(): Promise<NFTQueryResponse> {
-    const res = await fetch("/api/graphql", {
+    const endpoint = process.env.NEXT_PUBLIC_GRAPHQL_API_URL
+  if (!endpoint) throw new Error("NEXT_PUBLIC_GRAPHQL_API_URL not set")
+
+  const res = await fetch(endpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ query: GET_RECENT_NFTS }),
     cache: "no-store",
   })
-  if (!res.ok) throw new Error(`GraphQL HTTP ${res.status}`)
+
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(`GraphQL fetch failed: ${res.status} ${text}`)
+  }
+
   const json = await res.json()
-  if (json.errors) throw new Error(`GraphQL ${JSON.stringify(json.errors)}`)
+  if (json.errors) throw new Error(`GraphQL error: ${JSON.stringify(json.errors)}`)
   return json
 }
 
