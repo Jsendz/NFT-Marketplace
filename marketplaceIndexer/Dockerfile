@@ -1,10 +1,11 @@
-FROM node:20
+FROM ghcr.io/joshstevens19/rindexer-bundled
 
 WORKDIR /app
 
-COPY . .
+# Copy your rindexer.yaml and ABI
+COPY rindexer.yaml /app/rindexer.yaml
+COPY abis /app/abis
 
-RUN npm install
+EXPOSE 3001
 
-EXPOSE 8080
-CMD ["node", "index.js"] # or whatever your entrypoint is
+CMD ["start", "all", "--config", "/app/rindexer.yaml"]
