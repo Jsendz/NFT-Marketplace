@@ -69,13 +69,12 @@ const GET_RECENT_NFTS = `
 `
 
 async function fetchNFTs(): Promise<NFTQueryResponse> {
-  const endpoint = process.env.NEXT_PUBLIC_GRAPHQL_API_URL!;
-const res = await fetch(endpoint, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ query: GET_RECENT_NFTS }),
-  cache: "no-store",
-});
+  const res = await fetch("/api/graphql", {
+     method: "POST",
+     headers: { "Content-Type": "application/json" },
+     body: JSON.stringify({ query: GET_RECENT_NFTS }),
+     cache: "no-store",
+   });
 
   if (!res.ok) {
     const text = await res.text().catch(() => "")

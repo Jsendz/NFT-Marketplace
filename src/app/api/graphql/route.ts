@@ -1,3 +1,4 @@
+// src/app/api/graphql/route.ts
 export const runtime = "nodejs";
 
 function ensureGraphqlPath(u: string) {
@@ -8,43 +9,36 @@ function ensureGraphqlPath(u: string) {
     }
     return url.toString();
   } catch {
-    // if it's not a full URL, just append
     return (u.replace(/\/+$/, "") || "") + "/graphql";
   }
 }
 
-export async function GET() {
-  return new Response(JSON.stringify({ ok: true, hint: "Use POST /api/graphql" }), {
-    status: 200,
-    headers: { "content-type": "application/json" },
-  });
+function upstreamUrl() {
+  const raw =
+    process.env.GRAPHQL_API_URL ||
+    process.env.NEXT_PUBLIC_GRAPHQL_API_URL ||
+    "";
+  if (!raw) throw new Error("GRAPHQL_API_URL not set");
+  return ensureGraphqlPath(raw);
 }
 
 export async function POST(req: Request) {
-  const base = process.env.GRAPHQL_API_URL;
-  if (!base) return new Response("GRAPHQL_API_URL not set", { status: 500 });
-
-  const upstreamUrl = ensureGraphqlPath(base);
-  const body = await req.text();
-
-  let upstream: Response;
   try {
-    upstream = await fetch(upstreamUrl, {
+    const upstream = await fetch(upstreamUrl(), {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body,
+      body: await req.text(),
+      cache: "no-store",
+    });
+
+    const text = await upstream.text();
+    return new Response(text, {
+      status: upstream.status,
+      headers: { "content-type": "application/json" },
     });
   } catch (e: any) {
     return new Response(`Upstream fetch error: ${e?.message || e}`, { status: 502 });
   }
-
-  const text = await upstream.text();
-  return new Response(text, {
-    status: upstream.status,
-    headers: { "content-type": "application/json" },
-  });
 }
 
-export async function OPTIONS() {
-  return new Response(null, { status: 204 });
-}
+// (keep your existing GET and OPTIONS as-is)
