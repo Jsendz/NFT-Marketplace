@@ -1,3 +1,6 @@
+// src/components/RecentlyListed.tsx
+"use client"
+
 import { useQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
 import NFTBox from "./NFTBox"
@@ -18,15 +21,16 @@ interface NFTItem {
 
 interface NFTQueryResponse {
   data: {
-    allItemListeds: { nodes: NFTItem[] }
+    allItemListeds: { nodes: NFTItem[]; totalCount: number }
     allItemBoughts: { nodes: NFTItem[] }
     allItemCanceleds: { nodes: NFTItem[] }
   }
+  errors?: unknown
 }
 
 const GET_RECENT_NFTS = `
   query allItemListeds {
-    allItemListeds(first: 20, orderBy: [BLOCK_NUMBER_DESC, TX_INDEX_DESC]) {
+    allItemListeds(first: 100, orderBy: [BLOCK_NUMBER_DESC, TX_INDEX_DESC]) {
       nodes {
         rindexerId
         contractAddress
@@ -40,7 +44,7 @@ const GET_RECENT_NFTS = `
       }
       totalCount
     }
-    allItemBoughts {
+    allItemBoughts(first: 100, orderBy: [BLOCK_NUMBER_DESC, TX_INDEX_DESC]) {
       nodes {
         rindexerId
         contractAddress
@@ -53,7 +57,7 @@ const GET_RECENT_NFTS = `
         network
       }
     }
-    allItemCanceleds {
+    allItemCanceleds(first: 100, orderBy: [BLOCK_NUMBER_DESC, TX_INDEX_DESC]) {
       nodes {
         rindexerId
         contractAddress
@@ -69,19 +73,20 @@ const GET_RECENT_NFTS = `
 `
 
 async function fetchNFTs(): Promise<NFTQueryResponse> {
+  // Use the local proxy to avoid CORS and keep the upstream URL server-side
   const res = await fetch("/api/graphql", {
-     method: "POST",
-     headers: { "Content-Type": "application/json" },
-     body: JSON.stringify({ query: GET_RECENT_NFTS }),
-     cache: "no-store",
-   });
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query: GET_RECENT_NFTS }),
+    cache: "no-store",
+  })
 
   if (!res.ok) {
     const text = await res.text().catch(() => "")
     throw new Error(`GraphQL HTTP ${res.status} ${text}`)
   }
 
-  const json = await res.json()
+  const json = (await res.json()) as NFTQueryResponse
   if (json.errors) throw new Error(`GraphQL errors: ${JSON.stringify(json.errors)}`)
   return json
 }
@@ -112,29 +117,22 @@ function useRecentlyListedNFTs() {
       return !boughtNFTs.has(key) && !cancelledNFTs.has(key)
     })
 
+    // Limit to a reasonable number for the grid
     return availNfts.slice(0, 100).map((nft) => ({
       tokenId: nft.tokenId,
-      contractAddress: nft.nftAddress,
+      contractAddress: nft.nftAddress, // normalize field used by NFTBox / routes
       price: nft.price || "0",
     }))
   }, [data])
 
-  return { isLoading, error, nftDataList }
+  return { nftDataList, isLoading, error }
 }
 
 export default function RecentlyListedNFTs() {
-  const { isLoading, error, nftDataList } = useRecentlyListedNFTs()
+  const { nftDataList, isLoading, error } = useRecentlyListedNFTs()
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mt-8 text-center">
-        <Link
-          href="/list-nft"
-          className="inline-block py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        >
-          List Your NFT
-        </Link>
-      </div>
+    <div className="w-full max-w-7xl">
       <h2 className="text-2xl font-bold mb-6">Recently Listed NFTs</h2>
 
       {isLoading && <p>Loading…</p>}

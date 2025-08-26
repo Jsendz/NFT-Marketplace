@@ -9,6 +9,7 @@ function ensureGraphqlPath(u: string) {
     }
     return url.toString();
   } catch {
+    // if it's not a full URL, just append
     return (u.replace(/\/+$/, "") || "") + "/graphql";
   }
 }
@@ -23,22 +24,32 @@ function upstreamUrl() {
 }
 
 export async function POST(req: Request) {
+  let body: string;
   try {
-    const upstream = await fetch(upstreamUrl(), {
+    body = await req.text();
+  } catch (e: any) {
+    return new Response(`Failed to read request body: ${e?.message || e}`, { status: 400 });
+  }
+
+  let upstream: Response;
+  try {
+    upstream = await fetch(upstreamUrl(), {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: await req.text(),
+      body,
       cache: "no-store",
-    });
-
-    const text = await upstream.text();
-    return new Response(text, {
-      status: upstream.status,
-      headers: { "content-type": "application/json" },
     });
   } catch (e: any) {
     return new Response(`Upstream fetch error: ${e?.message || e}`, { status: 502 });
   }
+
+  const text = await upstream.text();
+  return new Response(text, {
+    status: upstream.status,
+    headers: { "content-type": "application/json" },
+  });
 }
 
-// (keep your existing GET and OPTIONS as-is)
+export async function OPTIONS() {
+  return new Response(null, { status: 204 });
+}
