@@ -1,4 +1,3 @@
-// src/app/api/graphql/route.ts
 export const runtime = "nodejs";
 
 function ensureGraphqlPath(u: string) {
@@ -9,7 +8,6 @@ function ensureGraphqlPath(u: string) {
     }
     return url.toString();
   } catch {
-    // if it's not a full URL, just append
     return (u.replace(/\/+$/, "") || "") + "/graphql";
   }
 }

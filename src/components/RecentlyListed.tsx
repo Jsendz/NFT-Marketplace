@@ -1,10 +1,9 @@
-// src/components/RecentlyListed.tsx
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
 import { useMemo } from "react"
-import NFTBox from "./NFTBox"
 import Link from "next/link"
+import NFTBox from "./NFTBox"
 
 interface NFTItem {
   rindexerId: number
@@ -73,7 +72,6 @@ const GET_RECENT_NFTS = `
 `
 
 async function fetchNFTs(): Promise<NFTQueryResponse> {
-  // Use the local proxy to avoid CORS and keep the upstream URL server-side
   const res = await fetch("/api/graphql", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -100,27 +98,25 @@ function useRecentlyListedNFTs() {
   const nftDataList = useMemo(() => {
     if (!data) return []
 
-    const boughtNFTs = new Set<string>()
-    const cancelledNFTs = new Set<string>()
+    const bought = new Set<string>()
+    const cancelled = new Set<string>()
 
-    data.data.allItemBoughts.nodes.forEach((item) => {
-      boughtNFTs.add(`${item.nftAddress}-${item.tokenId}`)
+    data.data.allItemBoughts.nodes.forEach((i) => {
+      bought.add(`${i.nftAddress}-${i.tokenId}`)
+    })
+    data.data.allItemCanceleds.nodes.forEach((i) => {
+      cancelled.add(`${i.nftAddress}-${i.tokenId}`)
     })
 
-    data.data.allItemCanceleds.nodes.forEach((item) => {
-      cancelledNFTs.add(`${item.nftAddress}-${item.tokenId}`)
+    const avail = data.data.allItemListeds.nodes.filter((i) => {
+      if (!i.nftAddress || !i.tokenId) return false
+      const key = `${i.nftAddress}-${i.tokenId}`
+      return !bought.has(key) && !cancelled.has(key)
     })
 
-    const availNfts = data.data.allItemListeds.nodes.filter((item) => {
-      if (!item.nftAddress || !item.tokenId) return false
-      const key = `${item.nftAddress}-${item.tokenId}`
-      return !boughtNFTs.has(key) && !cancelledNFTs.has(key)
-    })
-
-    // Limit to a reasonable number for the grid
-    return availNfts.slice(0, 100).map((nft) => ({
+    return avail.slice(0, 100).map((nft) => ({
       tokenId: nft.tokenId,
-      contractAddress: nft.nftAddress, // normalize field used by NFTBox / routes
+      contractAddress: nft.nftAddress, // normalize for routes/NFTBox
       price: nft.price || "0",
     }))
   }, [data])
@@ -145,13 +141,21 @@ export default function RecentlyListedNFTs() {
             key={`${nft.contractAddress}-${nft.tokenId}`}
           >
             <NFTBox
-              key={`${nft.contractAddress}-${nft.tokenId}`}
               tokenId={nft.tokenId}
               contractAddress={nft.contractAddress}
               price={nft.price}
             />
           </Link>
         ))}
+      </div>
+
+      {/* List NFT button */}
+      <div className="mt-8 flex justify-center">
+        <Link href="/sell-nft">
+          <button className="px-6 py-3 rounded-md bg-blue-600 text-white hover:bg-blue-700">
+            List NFT
+          </button>
+        </Link>
       </div>
     </div>
   )
