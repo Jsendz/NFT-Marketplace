@@ -15,7 +15,6 @@ function ensureGraphqlPath(u: string) {
 function upstreamUrl() {
   const raw =
     process.env.GRAPHQL_API_URL ||
-    process.env.NEXT_PUBLIC_GRAPHQL_API_URL ||
     "";
   if (!raw) throw new Error("GRAPHQL_API_URL not set");
   return ensureGraphqlPath(raw);
