@@ -151,7 +151,7 @@ export default function RecentlyListedNFTs() {
 
       {/* List NFT button */}
       <div className="mt-8 flex justify-center">
-        <Link href="/sell-nft">
+        <Link href="/list-nft">
           <button className="px-6 py-3 rounded-md bg-blue-600 text-white hover:bg-blue-700">
             List NFT
           </button>
