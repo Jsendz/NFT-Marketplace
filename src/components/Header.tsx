@@ -32,6 +32,11 @@ export default function Header() {
             <h3 className="italic text-left hidden text-zinc-500 lg:block">
                 A non-custodial, permissionless NFT Marketplace
             </h3>
+            <a href="/list-nft" className="flex items-center gap-1 text-zinc-800">
+  <span className="px-3 py-1.5 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-50 transition">
+    List NFT
+  </span>
+</a>
             <a href="/cake-nft" className="flex items-center gap-1 text-zinc-800">
                 <h1 className="flex items-center justify-center gap-1 px-4 py-2 bg-zinc-100 hover:bg-zinc-200 text-zinc-800 rounded-md shadow-sm transition-colors duration-200 border border-zinc-300">
                     Cake NFT
