@@ -78,7 +78,7 @@ const GET_RECENT_NFTS = `
 
 // Function to fetch data from GraphQL API
 async function fetchNFTs(): Promise<NFTQueryResponse> {
-    const response = await fetch("/api/graphql", {
+    const response = await fetch("http://localhost:3001/graphql", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
