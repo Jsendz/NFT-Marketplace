@@ -1,21 +1,34 @@
-interface ContractsConfig {
-    [chainId: number]: {
-        usdc: string
-        nftMarketplace: string
-        cakeNft: string
-        moodNft: string
-    }
-}
+import type { Address } from "viem";
 
-export const chainsToContracts: ContractsConfig = {
-    31337: {
-        usdc: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-        nftMarketplace: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-        cakeNft: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-        moodNft: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
-    },
-}
+type ChainContracts = {
+  usdc?: Address;
+  nftMarketplace?: Address;
+  cakeNft?: Address;
+  moodNft?: Address;
+};
 
+export const ANVIL_ID = 31337 as const;
+export const SEPOLIA_ID = 11155111 as const;
+
+export const chainsToContracts: Record<number, ChainContracts> = {
+  [ANVIL_ID]: {
+    usdc: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    nftMarketplace: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+    cakeNft: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+    moodNft: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+  },
+  [SEPOLIA_ID]: {
+    // from your Foundry broadcast
+    usdc: "0x8099829422022c86Ae8e83DA901d2b0260d16Dac",
+    nftMarketplace: "0x91c7ed5261a7e578ebd458efb7f17d04108ecffa",
+    cakeNft: "0x49cfa80e24b9bb198d0c56278c1e10c492518218",
+    // add these only if you’ve deployed them on Sepolia:
+    // cakeNft: "0x...",
+    // moodNft: "0x...",
+  },
+};
+
+export const SUPPORTED_CHAIN_IDS = Object.keys(chainsToContracts).map(Number);
 export const erc20Abi = [
     {
         type: "function",
