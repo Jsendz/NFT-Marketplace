@@ -12,14 +12,13 @@ storage:
   #   path: ./generated_csv
 native_transfers:
   enabled: false
-
-  contracts:
-  - name: NftMarketplace
-    details:
-      - network: sepolia
-        address: 0xYOUR_CONTRACT
-        start_block: "DEPLOY_BLOCK"
-    abi: ./abis/NftMarketplace.abi.json
+contracts:
+- name: NftMarketplace
+  details:
+  - network: sepolia
+    address: 0xYOUR_CONTRACT
+    start_block: "DEPLOY_BLOCK"
+  abi: ./abis/NftMarketplace.abi.json
   include_events:
   - ItemListed
   - ItemCanceled
