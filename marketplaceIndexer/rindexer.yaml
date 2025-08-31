@@ -14,9 +14,9 @@ contracts:
   - name: NftMarketplace
     details:
       - network: sepolia
-        address: "0x91c7ed5261a7e578ebd458efb7f17d04108ecffa"
-        start_block: 9039207
-    abi: ./abis/nftMarketplace.abi.json  # note the lowercase filename
+        address: "0x91c7ed5261a7e578ebd458efb7f17d04108ecffa"  # QUOTED
+        start_block: 9039207                                    # DECIMAL (no 0x)
+    abi: ./abis/nftMarketplace.abi.json
     include_events:
       - ItemListed
       - ItemCanceled
